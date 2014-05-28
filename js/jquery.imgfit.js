@@ -34,6 +34,11 @@
 
             this.init = function(option){
                 $.extend(this.config,option);
+
+                if(this.config.canvasMode){
+                    if(!Modernizr.canvas)this.config.canvasMode = false;
+                }
+                
                 if(!this.ratio){
                     var image = new Image();
                     image.onload = function(){

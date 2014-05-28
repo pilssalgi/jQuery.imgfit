@@ -6,11 +6,11 @@
   ```javascript
   
   $(img).imgfit({
-    align : "c", 
-    fit : "contain", 
-    canvasMode : true, 
-    position :'absolute', 
-    callBack : function(){} 
+    align       : "c", 
+    fit         : "contain", 
+    canvasMode  : true, 
+    position    : "absolute", 
+    callBack    : function(){} 
   });
   
   ```

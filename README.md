@@ -1,6 +1,6 @@
 
 # jQuery.imgfit
-
+[https://github.com/pilssalgi/jQuery.imgfit](https://github.com/pilssalgi/jQuery.imgfit" target="_blank)
 
 # HowToUse
 >##code

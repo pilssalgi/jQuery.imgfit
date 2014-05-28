@@ -7,184 +7,163 @@
 
 (function(){
     var _bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-    jQuery.fn.imgfit = function(option){
-        var $this       = $(this);
-            // types       = ['fit'],
-            // config      = { align : "c", fit : "all", canvasMode : false },
-            // isIE        = navigator.userAgent.toLowerCase().indexOf("trident/7.0") !== -1?true:false;
+    if(!$.imgfitClass){
+        $.imgfitClass = function($img,option){
+            if(typeof window.imgfitID == 'undefined')window.imgfitID = 0;
+            else window.imgfitID++;
 
-        (function(){
-            var i = 0, n= $this.length;
-            for(i; i<n; i++){
-                $img = $this[i];
-                console.log($img);
-            }
-        }).call(this)
-        // $.extend(config,option);
-        // function init(){
-        //     if(config.canvasMode)if(!Modernizr.canvas)config.canvasMode = false;
+            var _this       = this,
+                _img        = $img[0],
+                fitTarget   = undefined;
 
-        //     $this.each(function(i){
-        //         var _this   = this,
-        //             $img    = $(this),
-        //             img     = $img[0];
+            this.id = Number(window.imgfitID);
+            this.ratio              = undefined;
+            this.naturalWidth       = undefined;
+            this.naturalHeight      = undefined;
+            this.canvas             = undefined;
+            this.ctx                = undefined;
+            this.$img               = $img;
+            this.parent             = $img.parent();
+            this.config             = { align : "c", fit : "all", canvasMode : false, position:'absolute', callBack : undefined, autoResize : true };
+            this.css                = { width : 'cover', height : 'auto', left : 0, top : 0};
+            this.ratio              = _img.naturalWidth/_img.naturalHeight;
+            // $.extend(this.config,option);
 
-        //         img.ratio        = img.naturalWidth/img.naturalHeight;
-        //         img.parent       = $img.parent();
-
-        //         if($img.css('position') == 'static')$img.css({position:'absolute'});
-
-        //         if(!img.ratio){
-        //             var image = new Image();
-        //             image.onload = function(){
-        //                 img.naturalWidth    = image.width;
-        //                 img.naturalHeight   = image.height;
-        //                 img.ratio           = image.width/image.height;
-        //                 setting($img,img)
-        //             }
-        //             image.src = $img.attr("src");
-        //         }else{
-        //             setting($img,img)
-        //         }
-        //     });
-        // }
-
-        function setting($img,img){
-            // if(config.canvasMode){
-            //     var parent      = $img.parent(),
-            //         className   = $img.context.className;
-
-            //     $img.css({display:'none',opacity:0});
-            //     $img.removeClass(className);
-
-            //     img.canvas           = $('<canvas id="imgfit-canvas-'+1+'" class="'+className+'"></canvas>').css({position:'absolute'}).appendTo(parent)[0]
-            //     img.ctx              = img.canvas.getContext("2d");
-            //     img.canvas.width     = img.naturalWidth;
-            //     img.canvas.height    = img.naturalHeight;
-            // }
-
-            // img.fitimage = new FitImage();
-        }
-
-        function ImageFit($img,option){
-            this.config = { align : "c", fit : "all", canvasMode : false };
-            $.extend(this.config,option);
-            // isIE        = navigator.userAgent.toLowerCase().indexOf("trident/7.0") !== -1?true:false;
-
-            init = function(){
-                // if(config.canvasMode)if(!Modernizr.canvas)config.canvasMode = false;
-
-                // $this.each(function(i){
-                //     var _this   = this,
-                //         $img    = $(this),
-                //         img     = $img[0];
-
-                //     img.ratio        = img.naturalWidth/img.naturalHeight;
-                //     img.parent       = $img.parent();
-
-                //     if($img.css('position') == 'static')$img.css({position:'absolute'});
-
-                //     if(!img.ratio){
-                //         var image = new Image();
-                //         image.onload = function(){
-                //             img.naturalWidth    = image.width;
-                //             img.naturalHeight   = image.height;
-                //             img.ratio           = image.width/image.height;
-                //             setting($img,img)
-                //         }
-                //         image.src = $img.attr("src");
-                //     }else{
-                //         setting($img,img)
-                //     }
-                // });
+            this.init = function(option){
+                $.extend(this.config,option);
+                if(!this.ratio){
+                    var image = new Image();
+                    image.onload = function(){
+                        _this.naturalWidth  = image.width;
+                        _this.naturalHeight = image.height;
+                        _img.naturalWidth   = image.width;
+                        _img.naturalHeight  = image.height;
+                        _this.ratio = image.width/image.height;
+                        _this.setting();
+                    }
+                    image.src = $img.attr("src");
+                }else{
+                    _this.setting();
+                }
             }
 
+            var className = $img.context.className;
+            this.setting = function(){
+                $img.css({position:this.config.position});
+                if(this.config.canvasMode && !this.$canvas){
+                    this.$canvas            = $('<canvas id="imgfit-canvas-'+this.id+'"></canvas>').css({position:this.config.position}).appendTo(this.parent);
+                    this.canvas             = this.$canvas[0]
+                    this.ctx                = this.canvas.getContext("2d");
+                    this.canvas.width       = _img.naturalWidth;
+                    this.canvas.height      = _img.naturalHeight;
+                    fitTarget = this.$canvas;
+                    setTimeout(function(){
+                        _this.ctx.drawImage(_img,0,0);
+                    },10);
+                }
 
-            this.resize = function(){
-                // console.log(this);
+                if(this.config.canvasMode){
+                    fitTarget = this.$canvas;
+                    this.$canvas.css({display:'block'});
+                    $img.css({display:'none'});
+                }else{
+                    fitTarget = $img;
+                    $img.css({display:'block'});
+                    if(this.$canvas){
+                        this.$canvas.css({display:'none'});        
+                    }
+                }
+                
+                if(!this.isAddEvent){
+                    this.isAddEvent = true;    
+                    $(window).on('resize',this.onResize);
+                }
+                this.fit();                   
             }
 
+            this.fit = function(){
+                var frameW  = this.parent.width(),
+                    frameH  = this.parent.height();
+
+                if(frameW/this.ratio < frameH){
+                    this.css.width   = frameH*this.ratio;
+                    this.css.height  = frameH;
+                }else{
+                    this.css.width   = frameW;
+                    this.css.height  = frameW/this.ratio;
+                }
+
+                switch(this.config.fit){
+                    case 'cover'    :   break;
+                    case 'width'    :   this.css.width   = frameW;
+                                        this.css.height  = frameW/this.ratio; 
+                                        break;
+
+                    case 'height'   :   this.css.width   = frameH*this.ratio;
+                                        this.css.height  = frameH;
+                                        break;
+
+                    case 'contain'  :   if(frameH*this.ratio > frameW){
+                                            this.css.width   = frameW;
+                                            this.css.height  = frameW/this.ratio; 
+                                        }else{
+                                            this.css.width   = frameH*this.ratio;
+                                            this.css.height  = frameH;
+                                        }
+                                        break;
+                }
+
+                this.css.left    = (frameW-this.css.width)*0.5;
+                this.css.top     = (frameH-this.css.height)*0.5;
+
+                switch(this.config.align){
+                    case 'l'    :   this.css.left = 0;
+                                    break;
+                    case 'r'    :   this.css.left = (frameW-this.css.width);
+                                    break;
+                    case 't'    :   this.css.top = 0;
+                                    break;
+                    case 'b'    :   this.css.top = (frameH-this.css.height);
+                                    break;
+                    case 'lt'   :   this.css.left = 0; this.css.top = 0;
+                                    break;
+                    case 'lb'   :   this.css.left = 0; this.css.top = (frameH-this.css.height);
+                                    break;
+                    case 'rt'   :   this.css.left = (frameW-this.css.width); this.css.top = 0;
+                                    break;
+                    case 'rb'   :   this.css.left = (frameW-this.css.width); this.css.top = (frameH-this.css.height);
+                                    break;
+                }
+
+                fitTarget.css(this.css);
+            }
+
+            this.onResize = function(){
+                if(_this.config.autoResize){
+                    _this.fit();
+                    if(_this.config.callBack){
+                        _this.config.callBack.apply(_this);
+                    }    
+                }
+            }
+
+            this.init(option);
             return this;
         }
-        ImageFit.prototype.constructor = ImageFit;
+        $.imgfitClass.prototype.constructor = $.imgfitClass;
+    }
+    jQuery.fn.imgfit = function(option){
+        var $this       = $(this);
+        $this.each(function(i){
+            var $img    = $(this),
+                img     = $img[0];
+            if(!img.imgfit){
+                img.imgfit = new $.imgfitClass($img,option);
+            }else{
+                img.imgfit.init(option);
+            }
+        });
 
-        // function fit(){
-        //     img.each(function(i){
-        //         var img     = $(this),
-        //             data    = img[0],
-        //             frameW  = data.parent.width(),
-        //             frameH  = data.parent.height(),
-        //             css     = { width : 'auto', height : 'auto', left : 0, top : 0};
-
-        //         if(frameW/data.ratio < frameH){
-        //             css.width   = frameH*data.ratio;
-        //             css.height  = frameH;
-        //         }else{
-        //             css.width   = frameW;
-        //             css.height  = frameW/data.ratio;
-        //         }
-
-        //         switch(config.fit){
-        //             case 'all'      :   break;
-        //             case 'width'    :   css.width   = frameW;
-        //                                 css.height  = frameW/data.ratio; 
-        //                                 // css.left    = 0; css.top = (frameH-css.height)*0.5;
-        //                                 break;
-
-        //             case 'height'   :   css.width   = frameH*data.ratio;
-        //                                 css.height  = frameH;
-        //                                 // css.left = (frameW-css.width)*0.5; css.top = 0;
-        //                                 break;
-        //         }
-
-        //         css.left    = (frameW-css.width)*0.5;
-        //         css.top     = (frameH-css.height)*0.5;
-
-
-        //         switch(config.align){
-        //             case 'l'    :   css.left = 0;
-        //                             break;
-        //             case 'r'    :   css.left = (frameW-css.width);
-        //                             break;
-        //             case 't'    :   css.top = 0;
-        //                             break;
-        //             case 'b'    :   css.top = (frameH-css.height);
-        //                             break;
-        //             case 'lt'   :   css.left = 0; css.top = 0;
-        //                             break;
-        //             case 'lb'   :   css.left = 0; css.top = (frameH-css.height);
-        //                             break;
-        //             case 'rt'   :   css.left = (frameW-css.width); css.top = 0;
-        //                             break;
-        //             case 'rb'   :   css.left = (frameW-css.width); css.top = (frameH-css.height);
-        //                             break;
-        //         }
-
-               
-
-        //         if(config.canvasMode){
-        //             var canvas = data.canvas;
-        //             if(canvas.width == 0 || canvas.height == 0 ){
-        //                 canvas.width     = img.width();
-        //                 canvas.height    = img.height();
-        //                 data.ctx.drawImage(img[0],0,0);
-        //                 // console.log(canvas.width);
-        //             }else{
-                        
-        //                 // data.ctx.drawImage(img[0],0,0);
-        //             }
-
-        //             $(canvas).css(css);
-                    
-        //         }else{
-        //             img.css(css);
-        //         }
-
-                
-        //     });
-        // }
-
-        // init();
         return this;
     }
 }).call(jQuery)

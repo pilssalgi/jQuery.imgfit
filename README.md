@@ -2,7 +2,7 @@
 # jQuery.imgfit
 
 
-# howtouse
+# Howtouse
   ```css
   img-wrap {
     position: absolute;
@@ -18,7 +18,7 @@
   ```html
   <div id="img-wrap">
     <img src="img/img2.jpg" class="fitimg">
-	</div>
+  </div>
   ```
 
   ```javascript

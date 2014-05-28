@@ -4,8 +4,15 @@
 
 # howtouse
   ```javascript
-  var s = "JavaScript syntax highlighting";
-  alert(s);
+  
+  $(img).imgfit({ 
+								align 		: "c", 
+								fit 		: "contain", 
+								canvasMode 	: true, 
+								position 	:'absolute', 
+								callBack  	: function(){}
+							})
+  
   ```
 
 # parameters

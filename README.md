@@ -3,6 +3,7 @@
 
 
 # HowToUse
+>##code
   ```css
   img-wrap {
     position: absolute;
@@ -18,10 +19,10 @@
     <img src="img/img2.jpg" class="fitimg">
   </div>
   ```
-  
-```javascript
+  ```javascript
   $('.fitimg').imgfit();
-  
+  ```
+  ```javascript
   $('.fitimg').imgfit({
     align       : "c", 
     fit         : "contain", 
@@ -29,9 +30,15 @@
     position    : "absolute", 
     callBack    : function(){} 
   });
-```
-
-# parameters
+  ```
+>###parameters
+   ```
+   align      : "c" , "l", "t", "r", "b", "lt", "lr", "rt", "rb"
+   fit        : "cover" , "contain", "width", "height"
+   canvsMode  : true , false
+   position   : "absolute","relative"
+   callBack   : function(){}
+   ```
 
 
 

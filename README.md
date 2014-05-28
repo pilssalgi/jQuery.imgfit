@@ -1,9 +1,9 @@
 
 # jQuery.imgfit
 
-
-# Howtouse
-  ```css
+---
+# HowToUse
+>  ```css
   img-wrap {
     position: absolute;
     width: 80%;
@@ -32,10 +32,9 @@
   });
   
   ```
-
+---
 # parameters
 
-# require
 
 
 

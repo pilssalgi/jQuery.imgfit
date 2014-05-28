@@ -1,8 +1,11 @@
 /**
- * 2014.03.
+ * 2014.05
  * imgfit ver 0.0.2
- * Author : Heonwongeun
+ *
+ * Author   : Heonwongeun
  * FaceBook : https://www.facebook.com/heo.wongeun
+ * github   : https://github.com/pilssalgi/jQuery.imgfit
+ * mail     : heowongeun@gmail.com
  */
 
 (function(){

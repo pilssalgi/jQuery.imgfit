@@ -5,13 +5,13 @@
 # howtouse
   ```javascript
   
-  $(img).imgfit({ 
-								align 		: "c", 
-								fit 		: "contain", 
-								canvasMode 	: true, 
-								position 	:'absolute', 
-								callBack  	: function(){}
-							})
+  $(img).imgfit({
+    align : "c", 
+    fit : "contain", 
+    canvasMode : true, 
+    position :'absolute', 
+    callBack : function(){} 
+  });
   
   ```
 

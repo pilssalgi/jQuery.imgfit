@@ -1,7 +1,7 @@
 
 # jQuery.imgfit
 
----
+
 # HowToUse
 > ### css 
   ```css
@@ -22,8 +22,12 @@
     <img src="img/img2.jpg" class="fitimg">
   </div>
   ```
-
+  ---
 > ### js
+  ```javascript
+  $('.fitimg').imgfit();
+  ```
+>---  
   ```javascript
   $('.fitimg').imgfit({
     align       : "c", 
@@ -33,7 +37,7 @@
     callBack    : function(){} 
   });
   ```
----
+
 # parameters
 
 

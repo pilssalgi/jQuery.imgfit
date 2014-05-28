@@ -7,152 +7,158 @@
 
 (function(){
     var _bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-    jQuery.fn.imgfit = function(option){
-        var $this       = $(this);
-        if(!$.fn.imgfitClass){
-            $.fn.imgfitClass = function($img,option){
-                if(typeof window.imgfitID == 'undefined')window.imgfitID = 0;
-                else window.imgfitID++;
+    if(!$.imgfitClass){
+        $.imgfitClass = function($img,option){
+            if(typeof window.imgfitID == 'undefined')window.imgfitID = 0;
+            else window.imgfitID++;
 
-                var _this       = this,
-                    _img        = $img[0],
-                    fitTarget   = undefined;
+            var _this       = this,
+                _img        = $img[0],
+                fitTarget   = undefined;
 
-                this.id = Number(window.imgfitID);
-                this.ratio              = undefined;
-                this.naturalWidth       = undefined;
-                this.naturalHeight      = undefined;
-                this.canvas             = undefined;
-                this.ctx                = undefined;
-                this.$img               = $img;
-                this.parent             = $img.parent();
-                this.config             = { align : "c", fit : "all", canvasMode : false, position:'absolute', callBack : undefined, autoResize : true };
-                this.css                = { width : 'auto', height : 'auto', left : 0, top : 0};
-                this.ratio              = _img.naturalWidth/_img.naturalHeight;
+            this.id = Number(window.imgfitID);
+            this.ratio              = undefined;
+            this.naturalWidth       = undefined;
+            this.naturalHeight      = undefined;
+            this.canvas             = undefined;
+            this.ctx                = undefined;
+            this.$img               = $img;
+            this.parent             = $img.parent();
+            this.config             = { align : "c", fit : "all", canvasMode : false, position:'absolute', callBack : undefined, autoResize : true };
+            this.css                = { width : 'cover', height : 'auto', left : 0, top : 0};
+            this.ratio              = _img.naturalWidth/_img.naturalHeight;
+            // $.extend(this.config,option);
+
+            this.init = function(option){
                 $.extend(this.config,option);
-
-                this.init = function(option){
-                    $.extend(this.config,option);
-                    if(!this.ratio){
-                        var image = new Image();
-                        image.onload = function(){
-                            _this.naturalWidth  = image.width;
-                            _this.naturalHeight = image.height;
-                            _img.naturalWidth   = image.width;
-                            _img.naturalHeight  = image.height;
-                            _this.ratio = image.width/image.height;
-                            _this.setting();
-                        }
-                        image.src = $img.attr("src");
-                    }else{
+                if(!this.ratio){
+                    var image = new Image();
+                    image.onload = function(){
+                        _this.naturalWidth  = image.width;
+                        _this.naturalHeight = image.height;
+                        _img.naturalWidth   = image.width;
+                        _img.naturalHeight  = image.height;
+                        _this.ratio = image.width/image.height;
                         _this.setting();
                     }
+                    image.src = $img.attr("src");
+                }else{
+                    _this.setting();
                 }
-
-                var className = $img.context.className;
-                this.setting = function(){
-                    $img.css({position:this.config.position});
-                    if(this.config.canvasMode && !this.$canvas){
-                        this.$canvas            = $('<canvas id="imgfit-canvas-'+this.id+'"></canvas>').css({position:this.config.position}).appendTo(this.parent);
-                        this.canvas             = this.$canvas[0]
-                        this.ctx                = this.canvas.getContext("2d");
-                        this.canvas.width       = _img.naturalWidth;
-                        this.canvas.height      = _img.naturalHeight;
-                        fitTarget = this.$canvas;
-                        setTimeout(function(){
-                            _this.ctx.drawImage(_img,0,0);
-                        },10);
-                    }
-
-                    if(this.config.canvasMode){
-                        fitTarget = this.$canvas;
-                        this.$canvas.css({display:'block'});
-                        $img.css({display:'none'});
-                    }else{
-                        fitTarget = $img;
-                        $img.css({display:'block'});
-                        if(this.$canvas){
-                            this.$canvas.css({display:'none'});        
-                        }
-                    }
-                    
-                    if(!this.isAddEvent){
-                        this.isAddEvent = true;    
-                        $(window).on('resize',this.onResize);
-                    }
-                    this.fit();                   
-                }
-
-                this.fit = function(){
-                    var frameW  = this.parent.width(),
-                        frameH  = this.parent.height();
-
-                    if(frameW/this.ratio < frameH){
-                        this.css.width   = frameH*this.ratio;
-                        this.css.height  = frameH;
-                    }else{
-                        this.css.width   = frameW;
-                        this.css.height  = frameW/this.ratio;
-                    }
-
-                    switch(this.config.fit){
-                        case 'all'      :   break;
-                        case 'width'    :   this.css.width   = frameW;
-                                            this.css.height  = frameW/this.ratio; 
-                                            break;
-
-                        case 'height'   :   this.css.width   = frameH*this.ratio;
-                                            this.css.height  = frameH;
-                                            break;
-                    }
-
-                    this.css.left    = (frameW-this.css.width)*0.5;
-                    this.css.top     = (frameH-this.css.height)*0.5;
-
-                    switch(this.config.align){
-                        case 'l'    :   this.css.left = 0;
-                                        break;
-                        case 'r'    :   this.css.left = (frameW-this.css.width);
-                                        break;
-                        case 't'    :   this.css.top = 0;
-                                        break;
-                        case 'b'    :   this.css.top = (frameH-this.css.height);
-                                        break;
-                        case 'lt'   :   this.css.left = 0; this.css.top = 0;
-                                        break;
-                        case 'lb'   :   this.css.left = 0; this.css.top = (frameH-this.css.height);
-                                        break;
-                        case 'rt'   :   this.css.left = (frameW-this.css.width); this.css.top = 0;
-                                        break;
-                        case 'rb'   :   this.css.left = (frameW-this.css.width); this.css.top = (frameH-this.css.height);
-                                        break;
-                    }
-
-                    fitTarget.css(this.css);
-                }
-
-                this.onResize = function(){
-                    if(_this.config.autoResize){
-                        _this.fit();
-                        if(_this.config.callBack){
-                            _this.config.callBack.apply(_this);
-                        }    
-                    }
-                }
-
-                this.init(option);
-                return this;
             }
-            $.fn.imgfitClass.prototype.constructor = $.fn.imgfitClass;
-            // console.log($.fn.imgfitClass)
+
+            var className = $img.context.className;
+            this.setting = function(){
+                $img.css({position:this.config.position});
+                if(this.config.canvasMode && !this.$canvas){
+                    this.$canvas            = $('<canvas id="imgfit-canvas-'+this.id+'"></canvas>').css({position:this.config.position}).appendTo(this.parent);
+                    this.canvas             = this.$canvas[0]
+                    this.ctx                = this.canvas.getContext("2d");
+                    this.canvas.width       = _img.naturalWidth;
+                    this.canvas.height      = _img.naturalHeight;
+                    fitTarget = this.$canvas;
+                    setTimeout(function(){
+                        _this.ctx.drawImage(_img,0,0);
+                    },10);
+                }
+
+                if(this.config.canvasMode){
+                    fitTarget = this.$canvas;
+                    this.$canvas.css({display:'block'});
+                    $img.css({display:'none'});
+                }else{
+                    fitTarget = $img;
+                    $img.css({display:'block'});
+                    if(this.$canvas){
+                        this.$canvas.css({display:'none'});        
+                    }
+                }
+                
+                if(!this.isAddEvent){
+                    this.isAddEvent = true;    
+                    $(window).on('resize',this.onResize);
+                }
+                this.fit();                   
+            }
+
+            this.fit = function(){
+                var frameW  = this.parent.width(),
+                    frameH  = this.parent.height();
+
+                if(frameW/this.ratio < frameH){
+                    this.css.width   = frameH*this.ratio;
+                    this.css.height  = frameH;
+                }else{
+                    this.css.width   = frameW;
+                    this.css.height  = frameW/this.ratio;
+                }
+
+                switch(this.config.fit){
+                    case 'cover'    :   break;
+                    case 'width'    :   this.css.width   = frameW;
+                                        this.css.height  = frameW/this.ratio; 
+                                        break;
+
+                    case 'height'   :   this.css.width   = frameH*this.ratio;
+                                        this.css.height  = frameH;
+                                        break;
+
+                    case 'contain'  :   if(frameH*this.ratio > frameW){
+                                            this.css.width   = frameW;
+                                            this.css.height  = frameW/this.ratio; 
+                                        }else{
+                                            this.css.width   = frameH*this.ratio;
+                                            this.css.height  = frameH;
+                                        }
+                                        break;
+                }
+
+                this.css.left    = (frameW-this.css.width)*0.5;
+                this.css.top     = (frameH-this.css.height)*0.5;
+
+                switch(this.config.align){
+                    case 'l'    :   this.css.left = 0;
+                                    break;
+                    case 'r'    :   this.css.left = (frameW-this.css.width);
+                                    break;
+                    case 't'    :   this.css.top = 0;
+                                    break;
+                    case 'b'    :   this.css.top = (frameH-this.css.height);
+                                    break;
+                    case 'lt'   :   this.css.left = 0; this.css.top = 0;
+                                    break;
+                    case 'lb'   :   this.css.left = 0; this.css.top = (frameH-this.css.height);
+                                    break;
+                    case 'rt'   :   this.css.left = (frameW-this.css.width); this.css.top = 0;
+                                    break;
+                    case 'rb'   :   this.css.left = (frameW-this.css.width); this.css.top = (frameH-this.css.height);
+                                    break;
+                }
+
+                fitTarget.css(this.css);
+            }
+
+            this.onResize = function(){
+                if(_this.config.autoResize){
+                    _this.fit();
+                    if(_this.config.callBack){
+                        _this.config.callBack.apply(_this);
+                    }    
+                }
+            }
+
+            this.init(option);
+            return this;
         }
-
-
+        $.imgfitClass.prototype.constructor = $.imgfitClass;
+    }
+    jQuery.fn.imgfit = function(option){
+        var $this       = $(this);
         $this.each(function(i){
             var $img    = $(this),
                 img     = $img[0];
             if(!img.imgfit){
-                img.imgfit = new $.fn.imgfitClass($img,option);
+                img.imgfit = new $.imgfitClass($img,option);
             }else{
                 img.imgfit.init(option);
             }

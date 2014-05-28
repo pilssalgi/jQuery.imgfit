@@ -11,28 +11,27 @@
 		<style>
 			body { 
 				margin: 0; padding: 0; 
-				background-color: #000;
+				background-color: #282828;
 				overflow: hidden; 
 			}
+			
+			h1 {
+				position: absolute;
+				text-align : center;
+				width: 100%;
+				font-family : arial;
+				color : #fff;
+				top: 5%;
+				letter-spacing: 0.1em;
+			}
+			a { color: inherit; text-decoration: none; }
 
 			#img-wrap {
 				position: absolute;
-				width: 30%;
-				height: 80%;
-				left: 10%; top:10%;
-				background-color: #111;
-				border: 10px solid #fff;
-				box-sizing : border-box;
-				overflow: hidden;				
-			}
-
-			#img-wrap2 {
-				position: absolute;
-				width: 30%;
-				height: 60%;
-				left: 60%; top:20%;
-				background-color: #111;
-				border: 10px solid #fff;
+				width: 80%;
+				height: 70%;
+				left: 10%; top:20%;
+				background-color: #000;
 				box-sizing : border-box;
 				overflow: hidden;				
 			}
@@ -48,26 +47,20 @@
 	</head>
 	<body>
 		<div id="img-wrap">
-			<img src="img/img1.jpg" class="img" alt="">
+			<img src="img/img1.jpg" class="fitimg" alt="">
 		</div>
-
-		<div id="img-wrap2">
-			<img src="img/img2.jpg" class="img" alt="">
-		</div>
-
+		<h1><a href="https://github.com/pilssalgi/jQuery.imgfit" target="_blank">jQuery.imgfit</a></h1>
 		<script>
 			$(document).ready(function(){
-				$(".img").each(function(){
-					var a = $(this).imgfit(
-							{ 
-								align 		: "c", 
-								fit 		: "all", 
-								canvasMode 	: true, 
-								position 	:'absolute', 
-								callBack  	: function(){}
-							}
-						);
-				});
+				$(".fitimg").imgfit();
+				// $(".fitimg").imgfit(
+				// 			{ 
+				// 				align 		: "c", 
+				// 				fit 		: "contain",
+				// 				canvasMode 	: true, 
+				// 				position 	:'absolute', 
+				// 				callBack  	: function(){}
+				// 			});
 			})
 		</script>
 	</body>

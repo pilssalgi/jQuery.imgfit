@@ -4,12 +4,14 @@
 
 # howtouse
   ```css
-  position: absolute;
-  width: 80%;
-  height: 80%;
-  left: 10%; top:10%;
-  background-color: #444;
-  overflow: hidden;			
+  img-wrap {
+    position: absolute;
+    width: 80%;
+    height: 80%;
+    left: 10%; top:10%;
+    background-color: #444;
+    overflow: hidden;
+  }
   ```
   
   

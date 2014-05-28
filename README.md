@@ -3,7 +3,8 @@
 
 ---
 # HowToUse
->  ```css
+> ### css 
+  ```css
   img-wrap {
     position: absolute;
     width: 80%;
@@ -15,14 +16,15 @@
   ```
   
   
+> ### html
   ```html
   <div id="img-wrap">
     <img src="img/img2.jpg" class="fitimg">
   </div>
   ```
 
+> ### js
   ```javascript
-  
   $('.fitimg').imgfit({
     align       : "c", 
     fit         : "contain", 
@@ -30,7 +32,6 @@
     position    : "absolute", 
     callBack    : function(){} 
   });
-  
   ```
 ---
 # parameters

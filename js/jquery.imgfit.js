@@ -27,18 +27,12 @@
             this.ctx                = undefined;
             this.$img               = $img;
             this.parent             = $img.parent();
-            this.config             = { align : "c", fit : "all", canvasMode : false, position:'absolute', callBack : undefined, autoResize : true };
+            this.config             = { align : "c", fit : "all", canvasMode : false, position:'absolute', minWidth:undefined, minHeight:undefined, maxWidth:undefined, maxWidth:undefined, callBack : undefined, autoResize : true };
             this.css                = { width : 'cover', height : 'auto', left : 0, top : 0};
             this.ratio              = _img.naturalWidth/_img.naturalHeight;
             // $.extend(this.config,option);
 
             this.init = function(option){
-                $.extend(this.config,option);
-
-                if(this.config.canvasMode){
-                    if(!Modernizr.canvas)this.config.canvasMode = false;
-                }
-                
                 if(!this.ratio){
                     var image = new Image();
                     image.onload = function(){
@@ -47,19 +41,48 @@
                         _img.naturalWidth   = image.width;
                         _img.naturalHeight  = image.height;
                         _this.ratio = image.width/image.height;
-                        _this.setting();
+                        _this.reset(option);
                     }
                     image.src = $img.attr("src");
                 }else{
-                    _this.setting();
+                    this.reset(option);
                 }
+            }
+
+            this.reset = function(option){
+                $.extend(this.config,option);
+
+                if(typeof this.config.minWidth !== 'undefined'){
+                    this.config.minWidth = this.sizeChange(this.config.minWidth,this.parent.width());
+                }
+
+                if(typeof this.config.minHeight !== 'undefined'){
+                    this.config.minHeight = this.sizeChange(this.config.minHeight,this.parent.height());
+                }
+
+                if(typeof this.config.maxWidth !== 'undefined'){
+                    this.config.maxWidth = this.sizeChange(this.config.maxWidth,this.parent.width());
+                }
+
+                if(typeof this.config.maxHeight !== 'undefined'){
+                    this.config.maxHeight = this.sizeChange(this.config.maxHeight,this.parent.height());
+                }
+
+
+                if(this.config.canvasMode){
+                    if(!Modernizr.canvas)this.config.canvasMode = false;
+                }
+
+                this.setting();
             }
 
             var className = $img.context.className;
             this.setting = function(){
                 $img.css({position:this.config.position});
+                console.log(this.config.canvasMode)
                 if(this.config.canvasMode && !this.$canvas){
-                    this.$canvas            = $('<canvas id="imgfit-canvas-'+this.id+'"></canvas>').css({position:this.config.position}).appendTo(this.parent);
+                    
+                    this.$canvas            = $('<canvas class="'+className+'_canvas" id="imgfit-canvas-'+this.id+'"></canvas>').css({position:this.config.position}).appendTo(this.parent);
                     this.canvas             = this.$canvas[0]
                     this.ctx                = this.canvas.getContext("2d");
                     this.canvas.width       = _img.naturalWidth;
@@ -68,6 +91,8 @@
                     setTimeout(function(){
                         _this.ctx.drawImage(_img,0,0);
                     },10);
+
+                    $img
                 }
 
                 if(this.config.canvasMode){
@@ -121,6 +146,34 @@
                                         break;
                 }
 
+                if(typeof this.config.minWidth !== 'undefined'){
+                    if(this.css.width < this.config.minWidth){
+                        this.css.width  = this.config.minWidth;
+                        this.css.height = this.css.width/this.ratio;
+                    }
+                }
+
+                if(typeof this.config.minHeight !== 'undefined'){
+                    if(this.css.height < this.config.minHeight){
+                        this.css.height = this.config.minHeight;
+                        this.css.width   = this.css.height*this.ratio;
+                    }
+                }
+
+                if(typeof this.config.maxWidth !== 'undefined'){
+                    if(this.css.width > this.config.maxWidth){
+                        this.css.width  = this.config.maxWidth;
+                        this.css.height = this.css.width/this.ratio;
+                    }
+                }
+
+                if(typeof this.config.maxHeight !== 'undefined'){
+                    if(this.css.height > this.config.maxHeight){
+                        this.css.height = this.config.maxHeight;
+                        this.css.width   = this.css.height*this.ratio;
+                    }
+                }
+
                 this.css.left    = (frameW-this.css.width)*0.5;
                 this.css.top     = (frameH-this.css.height)*0.5;
 
@@ -155,20 +208,40 @@
                 }
             }
 
+            this.sizeChange = function(value,originalsize){
+                var num;
+                if(typeof value == "string"){
+                    if(value.indexOf("px") > -1){
+                        num = value.replace("px","");
+                        num = Number(num);
+                    }else if(value.indexOf("%") > -1){
+                        num = Number(value.replace("%",""));
+                        num = originalsize * num / 100;
+                    }else{
+                        num = Number(value);
+                    }
+                }else{
+                    num = value;
+                }
+                
+                return num;
+            }
+
             this.init(option);
             return this;
         }
         $.imgfitClass.prototype.constructor = $.imgfitClass;
     }
     jQuery.fn.imgfit = function(option){
-        var $this       = $(this);
+        var $this = $(this);
         $this.each(function(i){
             var $img    = $(this),
-                img     = $img[0];
-            if(!img.imgfit){
-                img.imgfit = new $.imgfitClass($img,option);
+                data    = $.data($img.get(0));
+
+            if(!data.imgfit){
+                data.imgfit = new $.imgfitClass($img,option);
             }else{
-                img.imgfit.init(option);
+                data.imgfit.reset(option);
             }
         });
 

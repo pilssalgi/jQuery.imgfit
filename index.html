@@ -28,9 +28,9 @@
 
 			#img-wrap {
 				position: absolute;
-				width: 80%;
-				height: 70%;
-				left: 10%; top:20%;
+				width: 100%;
+				height: 100%;
+				/*left: 10%; top:20%;*/
 				background-color: #000;
 				box-sizing : border-box;
 				overflow: hidden;				
@@ -55,12 +55,24 @@
 				// $(".fitimg").imgfit();
 				$(".fitimg").imgfit(
 							{ 
-								align 		: "b", 
+								align 		: "c", 
 								fit 		: "cover",
 								canvasMode 	: true, 
 								position 	:'absolute', 
 								callBack  	: function(){}
 							});
+
+				$('#img-wrap').on('click',function(){
+					$(".fitimg").imgfit(
+							{ 
+								align 		: "c", 
+								fit 		: "cover",
+								canvasMode 	: true, 
+								position 	:'absolute', 
+								callBack  	: function(){}
+							});
+
+				});
 			})
 		</script>
 	</body>

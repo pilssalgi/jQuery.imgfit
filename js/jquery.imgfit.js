@@ -94,7 +94,7 @@ if(!$.imgfitModernizr)$.imgfitModernizr=function(a,b,c){function y(a){i.cssText=
                     fitTarget = this.$canvas;
                     setTimeout(function(){
                         _this.ctx.drawImage(_img,0,0);
-                        this.fit();
+                        _this.fit();
                     },10);
                 }
 

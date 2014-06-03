@@ -94,9 +94,8 @@ if(!$.imgfitModernizr)$.imgfitModernizr=function(a,b,c){function y(a){i.cssText=
                     fitTarget = this.$canvas;
                     setTimeout(function(){
                         _this.ctx.drawImage(_img,0,0);
+                        _this.fit();
                     },10);
-
-                    $img
                 }
 
                 if(this.config.canvasMode){
@@ -115,7 +114,7 @@ if(!$.imgfitModernizr)$.imgfitModernizr=function(a,b,c){function y(a){i.cssText=
                     this.isAddEvent = true;    
                     $(window).on('resize',this.onResize);
                 }
-                this.fit();                   
+                this.fit();
             }
 
             this.fit = function(){
@@ -200,7 +199,12 @@ if(!$.imgfitModernizr)$.imgfitModernizr=function(a,b,c){function y(a){i.cssText=
                                     break;
                 }
 
+                if(this.config.canvasMode && this.$canvas){
+                    _this.ctx.drawImage(_img,0,0);
+                }
+
                 fitTarget.css(this.css);
+
             }
 
             this.onResize = function(){

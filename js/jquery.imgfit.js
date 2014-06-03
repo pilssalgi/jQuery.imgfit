@@ -94,6 +94,7 @@ if(!$.imgfitModernizr)$.imgfitModernizr=function(a,b,c){function y(a){i.cssText=
                     fitTarget = this.$canvas;
                     setTimeout(function(){
                         _this.ctx.drawImage(_img,0,0);
+                        this.fit();
                     },10);
                 }
 
@@ -113,7 +114,7 @@ if(!$.imgfitModernizr)$.imgfitModernizr=function(a,b,c){function y(a){i.cssText=
                     this.isAddEvent = true;    
                     $(window).on('resize',this.onResize);
                 }
-                this.fit();                   
+                this.fit();
             }
 
             this.fit = function(){
@@ -198,10 +199,12 @@ if(!$.imgfitModernizr)$.imgfitModernizr=function(a,b,c){function y(a){i.cssText=
                                     break;
                 }
 
-                fitTarget.css(this.css);
-                if(this.config.canvasMode && !this.$canvas){
+                if(this.config.canvasMode && this.$canvas){
                     _this.ctx.drawImage(_img,0,0);
                 }
+
+                fitTarget.css(this.css);
+
             }
 
             this.onResize = function(){

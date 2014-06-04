@@ -95,8 +95,6 @@ if(!$.imgfitModernizr)$.imgfitModernizr=function(a,b,c){function y(a){i.cssText=
                     setTimeout(function(){
                         _this.ctx.drawImage(_img,0,0);
                     },10);
-
-                    $img
                 }
 
                 if(this.config.canvasMode){
@@ -201,6 +199,9 @@ if(!$.imgfitModernizr)$.imgfitModernizr=function(a,b,c){function y(a){i.cssText=
                 }
 
                 fitTarget.css(this.css);
+                if(this.config.canvasMode && !this.$canvas){
+                    _this.ctx.drawImage(_img,0,0);
+                }
             }
 
             this.onResize = function(){
